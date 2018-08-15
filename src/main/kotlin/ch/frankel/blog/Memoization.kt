@@ -1,25 +1,13 @@
 package ch.frankel.blog
 
-class Memoization1<T, V> {
-
-    private val results = mutableMapOf<Pair<(T) -> V, T>, V>()
-
-    fun memoize(t: T, f: (T) -> V): (T) -> V {
-        with(f to t) {
-            if (!results.containsKey(this)) results[this] = f(t)
-            return { results[this]!! }
-        }
-    }
+fun <T, V> memoize(f: (T) -> V) = object : Function1<T, V> {
+    val results = mutableMapOf<T, V>()
+    override fun invoke(t: T) =
+            results.computeIfAbsent(t) { f(t) }
 }
 
-class Memoization2<X, Y, Z> {
-
-    private val results = mutableMapOf<Triple<(X, Y) -> Z, X, Y>, Z>()
-
-    fun memoize(x: X, y: Y, f: (X, Y) -> Z): (X, Y) -> Z {
-        with(Triple(f, x, y)) {
-            if (!results.containsKey(this)) results[this] = f(x, y)
-            return { _: X, _: Y -> results[this]!! }
-        }
-    }
+fun <X, Y, Z> memoize(f: (X, Y) -> Z) = object : Function2<X, Y, Z> {
+    val results = mutableMapOf<Pair<X, Y>, Z>()
+    override fun invoke(x: X, y: Y) =
+            results.computeIfAbsent(Pair(x, y)) { f(x, y) }
 }

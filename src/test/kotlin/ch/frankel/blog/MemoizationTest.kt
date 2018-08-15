@@ -9,26 +9,25 @@ class MemoizationTest {
 
     private val delay = 5000L
     private lateinit var memoizedFunction: (Int) -> Int
-    private lateinit var memoization: Memoization1<Int, Int>
     private var parameter: Int = -1
 
     @BeforeClass
     private fun setUpBeforeClass() {
-        memoization = Memoization1()
         parameter = 4
+        memoizedFunction = memoize<Int,Int> { Thread.sleep(delay); it * it }
     }
 
     @Test
-    fun `initial function should be slow`() {
+    fun `first call should be slow`() {
         val start = System.currentTimeMillis()
-        memoizedFunction = memoization.memoize(parameter) { Thread.sleep(delay); it * it }
+        memoizedFunction(parameter)
         val stop = System.currentTimeMillis()
         val time = stop - start
-        assertThat(time).isGreaterThan(delay)
+        assertThat(time).isGreaterThanOrEqualTo(delay)
     }
 
-    @Test(dependsOnMethods = ["initial function should be slow"])
-    fun `memoized function should be fast`() {
+    @Test(dependsOnMethods = ["first call should be slow"])
+    fun `subsequent calls should be fast`() {
         val start = System.currentTimeMillis()
         memoizedFunction(parameter)
         val stop = System.currentTimeMillis()
