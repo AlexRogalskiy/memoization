@@ -11,3 +11,15 @@ class Memoization1<T, V> {
         }
     }
 }
+
+class Memoization2<X, Y, Z> {
+
+    private val results = mutableMapOf<Triple<(X, Y) -> Z, X, Y>, Z>()
+
+    fun memoize(x: X, y: Y, f: (X, Y) -> Z): (X, Y) -> Z {
+        with(Triple(f, x, y)) {
+            if (!results.containsKey(this)) results[this] = f(x, y)
+            return { _: X, _: Y -> results[this]!! }
+        }
+    }
+}
