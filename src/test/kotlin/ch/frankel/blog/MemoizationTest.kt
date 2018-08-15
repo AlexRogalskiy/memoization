@@ -14,7 +14,7 @@ class MemoizationTest {
     @BeforeClass
     private fun setUpBeforeClass() {
         parameter = 4
-        memoizedFunction = memoize<Int,Int> { Thread.sleep(delay); it * it }
+        memoizedFunction = { it: Int -> Thread.sleep(delay); it * it }.memoize()
     }
 
     @Test
